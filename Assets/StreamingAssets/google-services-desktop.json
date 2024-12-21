@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "364074325076",
+    "project_id": "heartland-hampers",
+    "storage_bucket": "heartland-hampers.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364074325076:android:ec4daabac75669586609c1",
+        "android_client_info": {
+          "package_name": "com.lasst.heartlandhampers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT0SJnyc3oFGOUVIY-aJ3B1QC1jc1hxXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

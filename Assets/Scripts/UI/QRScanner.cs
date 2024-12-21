@@ -6,6 +6,10 @@ using UnityEngine.UI;
 using ZXing;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+using Firebase;
+using Firebase.Database;
+using Firebase.Extensions;
 
 public class QRScanner : MonoBehaviour
 {
@@ -22,9 +26,13 @@ public class QRScanner : MonoBehaviour
 
     bool stopScanning = false;
     bool pauseScanning = false;
+    DatabaseReference database;
+
+    public void SwitchScene(string sceneName) => SceneManager.LoadScene(sceneName);
 
     void Start()
     {
+        // Initialise variables
         renderer = GetComponent<RawImage>();
         webcamTexture = new WebCamTexture(1080, 1920);
         renderer.texture = webcamTexture;
@@ -34,6 +42,22 @@ public class QRScanner : MonoBehaviour
         qr_scanner_bar.DOAnchorPosY(-570, 2f)
             .SetEase(Ease.Linear)
             .SetLoops(-1, LoopType.Yoyo);
+
+        // Initialise firebase
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+            var dependencyStatus = task.Result;
+            if (dependencyStatus == DependencyStatus.Available)
+            {
+                // Create and hold a reference to your FirebaseApp,
+                // where app is a Firebase.FirebaseApp property of your application class.
+                database = FirebaseDatabase.GetInstance("https://heartland-hampers-default-rtdb.asia-southeast1.firebasedatabase.app/").RootReference;
+
+            }
+            else
+            {
+                Debug.LogError(String.Format("Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+            }
+        });
     }
 
     IEnumerator GetQRCode()
@@ -71,8 +95,10 @@ public class QRScanner : MonoBehaviour
                         // Check if valid QR code from us!
                         if (QrCode.StartsWith("heartland_") && int.TryParse(QrCode.Split("heartland_")[1], out int id))
                         {
-                            // ID Stuff here!!
-                            qr_text.text = "ID OBTAINED: " + id;
+                            // ID Stuff here!
+                            database.Child("machine_id").SetValueAsync(id); // Update machine id
+                            CloudScriptManager.Instance.ExecGetBoxID(id => database.Child("box_id").SetValueAsync(id), error => Debug.LogError("Error getting box id!" + error.ToString())); // Update box ID
+
                             stopScanning = true;
                         }
                         else
