@@ -18,11 +18,11 @@ public class QRScanner : MonoBehaviour
     string QrCode = string.Empty;
 
     [SerializeField]
-    TMP_Text qr_text;
-    [SerializeField]
     RectTransform qr_scanner_bar;
     [SerializeField]
     RectTransform error_text;
+    [SerializeField]
+    QRPopupManager qrPopupManager;
 
     bool stopScanning = false;
     bool pauseScanning = false;
@@ -97,7 +97,12 @@ public class QRScanner : MonoBehaviour
                         {
                             // ID Stuff here!
                             database.Child("machine_id").SetValueAsync(id); // Update machine id
-                            CloudScriptManager.Instance.ExecGetBoxID(id => database.Child("box_id").SetValueAsync(id), error => Debug.LogError("Error getting box id!" + error.ToString())); // Update box ID
+                            CloudScriptManager.Instance.ExecGetBoxID(id => {
+                                database.Child("box_id").SetValueAsync(id);
+
+                                // Show locker popup
+                                qrPopupManager.ShowLockerPopup(id, () => SwitchScene("HomePage"));
+                            }, error => Debug.LogError("Error getting box id!" + error.ToString())); // Update box ID
 
                             stopScanning = true;
                         }
@@ -115,7 +120,7 @@ public class QRScanner : MonoBehaviour
                     }
                 }
             }
-            catch (Exception ex) { qr_text.text = "ERROR: " + ex.Message; }
+            catch (Exception ex) { Debug.LogError("ERROR: " + ex.Message); }
             yield return null;
         }
         webcamTexture.Stop();

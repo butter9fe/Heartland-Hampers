@@ -27,14 +27,14 @@ public class LoginManager : MonoBehaviour
         splashCoroutine = SplashCoroutine();
         StartCoroutine(splashCoroutine);
         // Check if logged in before and autologin
-        if (PlayerPrefs.HasKey("SPGroupCustomID"))
+        if (PlayerPrefs.HasKey("HeartlandCustomID"))
         {
             splashImage.SetActive(true);
             StopCoroutine(splashCoroutine); // Only hide splash screen after logged in
             var deviceReq = new LoginWithCustomIDRequest
             {
                 TitleId = PlayFabSettings.staticSettings.TitleId,
-                CustomId = PlayerPrefs.GetString("SPGroupCustomID")
+                CustomId = PlayerPrefs.GetString("HeartlandCustomID")
             };
 
             PlayFabClientAPI.LoginWithCustomID(
@@ -62,7 +62,7 @@ public class LoginManager : MonoBehaviour
     void OnRememberMe()
     {
         var customID = SystemInfo.deviceUniqueIdentifier;
-        PlayerPrefs.SetString("SPGroupCustomID", customID);
+        PlayerPrefs.SetString("HeartlandCustomID", customID);
         var linkReq = new LinkCustomIDRequest
         {
             CustomId = customID,
@@ -150,7 +150,7 @@ public class LoginManager : MonoBehaviour
      */
     void OnPlayerLoginSucc(LoginResult r)
     {
-        //OnRememberMe();
+        OnRememberMe(); // Save login info so player doesn't need to relogin
         StartCoroutine(LoadGameSceneAsync());
     }
 
