@@ -150,7 +150,7 @@ public class LoginManager : MonoBehaviour
      */
     void OnPlayerLoginSucc(LoginResult r)
     {
-        OnRememberMe();
+        //OnRememberMe();
         StartCoroutine(LoadGameSceneAsync());
     }
 
