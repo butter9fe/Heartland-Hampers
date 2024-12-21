@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/QRScene.unity
+    guid: 0a6686806db0ae1468babf2ce64b6b30
+  - enabled: 0
     path: Assets/Scenes/LoginScene.unity
     guid: 16b9ca3ae6eb7244e9a31467bd83ced8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/HomePage.unity
     guid: bdfe7f7135caff147b32a3d05706e3e2
   m_configObjects: {}
