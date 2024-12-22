@@ -7,6 +7,7 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System.Text.RegularExpressions;
 using UnityEngine.SceneManagement;
+using System.Threading;
 
 public class LoginManager : MonoBehaviour
 {
@@ -133,11 +134,9 @@ public class LoginManager : MonoBehaviour
         splashManager.OnButtonShowPassword(button, field_pw);
     }
 
-    private IEnumerator LoadGameSceneAsync()
+    private IEnumerator LoadGameSceneAsync(string sceneToLoad)
     {
-        splashManager.SetLoading(true);
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("HomePage");
-
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneToLoad);
         while (!asyncLoad.isDone)
             yield return null;
 
@@ -151,7 +150,17 @@ public class LoginManager : MonoBehaviour
     void OnPlayerLoginSucc(LoginResult r)
     {
         OnRememberMe(); // Save login info so player doesn't need to relogin
-        StartCoroutine(LoadGameSceneAsync());
+        splashManager.SetLoading(true);
+        CloudScriptManager.Instance.ExecGetHasApprovedApplication(approved =>
+        {
+            string sceneToLoad = approved ? "HomePage" : "ApplicationScene";
+            StartCoroutine(LoadGameSceneAsync(sceneToLoad));
+        },
+        e =>
+        {
+            Debug.LogError(e.ToString());
+            splashManager.SetLoading(false);
+        });
     }
 
     void OnError(string errorTitle, PlayFabError e)

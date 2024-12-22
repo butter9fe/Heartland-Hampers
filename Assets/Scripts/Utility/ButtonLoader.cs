@@ -11,7 +11,7 @@ public class ButtonLoader : MonoBehaviour
 
     private Button button;
 
-    private void Start()
+    private void Awake()
     {
         button = GetComponent<Button>();
         SetLoading(false);
@@ -32,5 +32,11 @@ public class ButtonLoader : MonoBehaviour
         {
             obj.SetActive(!isLoading);
         }
+    }
+
+    public void SetInteractable(bool isInteractable)
+    {
+        if (button != null)
+            button.interactable = isInteractable;
     }
 }
